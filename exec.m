@@ -52,7 +52,7 @@ end
 % User specification of the problem to be solved.
 disp('Problem:');
 disp('         1 - Poisson Control: L^1 + L^2-regularizer and bounded control.');
-disp('         2 - Convection Diffusion: L^1 + L^2-regularizer and bounded state and control.');
+disp('         2 - Convection Diffusion: L^1 + L^2-regularizer and bounded control.');
 problem_choice = input('Type 1 to 2 or anything else to exit.\n');
 solution_statistics = Pearson_PDE_Test_Generator(problem_choice,tol,max_PMM_iter,printlevel,fid);
 
