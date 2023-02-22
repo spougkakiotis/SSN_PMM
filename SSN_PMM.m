@@ -87,7 +87,7 @@ function [solution_struct] = SSN_PMM(Q, D, A, b, c, lb, ub, tol, maxit, printlev
     % free variables are set to zero.
     % -------------------------------------------------------------------------------------------------------------------- %
     beta = 1e2;   rho = 5e2;   zeta = 1;                                % Initial primal and dual regularization values.
-    warm_start_maxit = 400;
+    warm_start_maxit = 100;
     warm_start_tol = 1e-3;
     [x,v,~,z,ws_opt] = SSN_PMM_warmstart(Q,D,A,A_tr,b,c,lb,ub,warm_start_tol,warm_start_maxit);
     % ____________________________________________________________________________________________________________________ %
@@ -127,13 +127,20 @@ function [solution_struct] = SSN_PMM(Q, D, A, b, c, lb, ub, tol, maxit, printlev
             fprintf('optimal solution found\n');
             opt = 1;
             break;
-        elseif (norm(res_p,inf)/(1+norm(b,inf)) < tol && norm(res_d,inf)/(1+norm(c,inf)+norm(x,inf)) < tol ...
+        elseif (norm(res_p,inf)/(1+norm(b)) < tol && norm(res_d,inf)/(1+norm(c)+norm(x,inf)) < tol ...
                 &&  compl/(1 + norm(x,inf) + norm(z,inf)) < tol )
             fprintf('optimal solution found\n');
             opt = 1;
             break;
         end
-        PMM_iter = PMM_iter+1;
+%         elseif (norm(res_p,inf)/(1) < tol && norm(res_d,inf)/(1) < tol ...
+%                 &&  compl/(1) < tol )
+%             fprintf('optimal solution found\n');
+%             opt = 1;
+%             break;
+%         end
+% 
+        PMM_iter = PMM_iter+1;        
         % ________________________________________________________________________________________________________________ %
                 
         % ================================================================================================================ %
@@ -210,10 +217,11 @@ function [solution_struct] = SSN_PMM(Q, D, A, b, c, lb, ub, tol, maxit, printlev
     % ==================================================================================================================== %  
     % The PMM has terminated. Print results, and prepare output.
     % -------------------------------------------------------------------------------------------------------------------- %
+    [res_p,res_d,compl] = compute_residual(Q,D,A,A_tr,b,c,lb,ub,x,v,z);
     fprintf(print_fid,'outer iterations: %5d\n', PMM_iter);
     fprintf(print_fid,'inner iterations: %5d\n', SSN_iter);
-    fprintf(print_fid,'primal feasibility: %8.2e\n', norm(A*x-b,inf));
-    fprintf(print_fid,'dual feasibility: %8.2e\n', norm(A'*v-z-c-Q*x,inf));
+    fprintf(print_fid,'primal feasibility: %8.2e\n', norm(res_p,inf));
+    fprintf(print_fid,'dual feasibility: %8.2e\n', norm(res_d,inf));
     fprintf(print_fid,'complementarity: %8.2e\n', compl);  
     fprintf(print_fid,'total number of factorizations: %5d\n', total_num_of_factorizations);
     fprintf(print_fid,'total Krylov iterations: %5d\n', Krylov_iter);
@@ -221,7 +229,7 @@ function [solution_struct] = SSN_PMM(Q, D, A, b, c, lb, ub, tol, maxit, printlev
     solution_struct.opt = opt;  solution_struct.PMM_iter = PMM_iter;
     solution_struct.SSN_iter = SSN_iter;    solution_struct.Krylov_iter = Krylov_iter;
     solution_struct.total_num_of_factorizations = total_num_of_factorizations;
-    solution_struct.obj_val = c'*x + (1/2)*(x'*(Q*x));
+    solution_struct.obj_val = c'*x + (1/2)*(x'*(Q*x)) + norm(D.*x,1);
     % ____________________________________________________________________________________________________________________ %
 end
 % ************************************************************************************************************************ %
