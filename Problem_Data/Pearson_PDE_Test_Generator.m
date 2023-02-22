@@ -34,8 +34,8 @@ function [solution_statistics] = Pearson_PDE_Test_Generator(problem_choice,tol,m
     default = input('Type 1 for default parameters, or anything else to manually include them.\n');
     if (default == 1)
             nc = 8;
-            alpha_2 = 0;
-            alpha_1 = 1e-3;    % regularization parameter of the L1 norm
+            alpha_2 = 1e-2;
+            alpha_1 = 0;    % regularization parameter of the L1 norm
     else 
         fprintf('Choose the number of uniform grid points.\n');
         while(true)
@@ -156,7 +156,7 @@ function [solution_statistics] = Pearson_PDE_Test_Generator(problem_choice,tol,m
         ub = Inf.*ones(2*np,1);
         lb(np+1:2*np) = u_alpha.*ones(np,1);
         ub(np+1:2*np) = u_beta.*ones(np,1);
-        [A,L1_D,Q,c,b,lb,ub] = Problem_scaling_set_up(A,L1_D,Q,c,b,lb,ub,2*np,np);
+        %[A,L1_D,Q,c,b,lb,ub] = Problem_scaling_set_up(A,L1_D,Q,c,b,lb,ub,2*np,np);
         
         tStart = tic;
         [solution_struct] = SSN_PMM(Q, L1_D, A, b, c, lb, ub, tol, max_PMM_iter, printlevel, fid);
@@ -224,7 +224,7 @@ function [solution_statistics] = Pearson_PDE_Test_Generator(problem_choice,tol,m
         lb(np+1:2*np) = u_alpha.*ones(np,1);
         ub(np+1:2*np) = u_beta.*ones(np,1);
 
-        [A,L1_D,Q,c,b,lb,ub] = Problem_scaling_set_up(A,L1_D,Q,c,b,lb,ub,2*np,np);
+        %[A,L1_D,Q,c,b,lb,ub] = Problem_scaling_set_up(A,L1_D,Q,c,b,lb,ub,2*np,np);
 
         tStart = tic;
         [solution_struct] = SSN_PMM(Q, L1_D, A, b, c, lb, ub, tol, max_PMM_iter, printlevel, fid);
