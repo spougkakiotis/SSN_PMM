@@ -6,10 +6,11 @@ fid = 1;
 fprintf('Should the default parameters be used?\n');
 default = input('Type 1 for default parameters, or anything else to manually include them.\n');
 if (default == 1)
-    tol = 1e-5;                                             % Tolerance used.
+    tol = 1e-6;                                             % Tolerance used.
     max_PMM_iter = 200;                                     % Maximum number of IP iterations.
-    printlevel = 2;                                         % Printing choice (see IP-PMM documentation).
+    printlevel = 2;                                         % Printing choice (see SSN_PMM documentation).
     problem_set = "Pearson_PDE_Optimization";
+    %problem_set = "lasso_regression";
 else
     fprintf('Choose a value for the allowed error tolerance.\n');
     while(true)
@@ -46,13 +47,22 @@ else
     end
 end
 
+if (problem_set == "Pearson_PDE_Optimization")
+    % User specification of the problem to be solved.
+    disp('Problem:');
+    disp('         1 - Poisson Control: L^1 + L^2-regularizer and bounded control.');
+    disp('         2 - Convection Diffusion: L^1 + L^2-regularizer and bounded control.');
+    problem_choice = input('Type 1 to 2 or anything else to exit.\n');
+    solution_statistics = Pearson_PDE_Test_Generator(problem_choice,tol,max_PMM_iter,printlevel,fid);
+else
+        % Problem options: 
+    %    1. -> 'abalone_scale.txt',   2. -> 'cadata.txt',             3. -> 'cpusmall_scale.txt',
+    %    4. -> 'E2006.train',         5. -> 'space_ga_scale.txt'.     6. -> 'YearPredictionMSD'
+    parameters = struct();
+    pb_name = 'abalone_scale.txt';
+    parameters.tau = 0.8;
+    parameters.lambda = 5e-4;    
+    [solution_statistics_PMM] = lasso_regression_problem(pb_name,parameters,tol,max_PMM_iter,printlevel,fid);
 
-
-
-% User specification of the problem to be solved.
-disp('Problem:');
-disp('         1 - Poisson Control: L^1 + L^2-regularizer and bounded control.');
-disp('         2 - Convection Diffusion: L^1 + L^2-regularizer and bounded control.');
-problem_choice = input('Type 1 to 2 or anything else to exit.\n');
-solution_statistics = Pearson_PDE_Test_Generator(problem_choice,tol,max_PMM_iter,printlevel,fid);
+end
 
