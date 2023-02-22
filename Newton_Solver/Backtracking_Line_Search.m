@@ -61,7 +61,7 @@ function alpha = Backtracking_Line_Search(NS,x,v,dx,dv,mu,delta)
     % ---------------------------------------------------------------------------------------------------------------- %
     counter = 1;
     while (phi_new > phi + mu*(alpha)*(nabla_phi'*direction))
-        counter = counter + 4;
+        counter = counter + 30;
         alpha = delta^counter;
         x_new = x + alpha.*dx;
         v_new = v + alpha.*dv;

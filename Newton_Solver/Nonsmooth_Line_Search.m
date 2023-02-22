@@ -66,7 +66,7 @@ function alpha = Nonsmooth_Line_Search(NS,x,v,dx,dv,mu,delta)
     % ---------------------------------------------------------------------------------------------------------------- %
     counter = 1;
     while (norm(F_hat_new)^2 > (1-2*mu*alpha)*Theta)
-        counter = counter + 4;
+        counter = counter + 30;
         alpha = delta^counter;
         x_new = x + alpha.*dx;
         v_new = v + alpha.*dv;
